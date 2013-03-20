@@ -1,9 +1,13 @@
 package org.sjson;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.StringReader;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.sql.Date;
 import java.sql.Time;
@@ -25,9 +29,9 @@ public class JsonCodecTrunk implements JsonCodec {
 
 	Map<Type, TypeCodec> codecs = new HashMap<>();
 	public static Map<Integer, Object> DEFAULT_CONFIGS = new HashMap<>(10);
-	public static SimpleDateFormat DEFAULT_DATE_FORMAT =JsonConfigKeys.DEFAULT_DATE_FORMAT;
-	public static SimpleDateFormat DEFAULT_TIME_FORMAT =JsonConfigKeys.DEFAULT_TIME_FORMAT;
-	public static SimpleDateFormat DEFAULT_DATETIME_FORMAT =JsonConfigKeys.DEFAULT_DATETIME_FORMAT;
+	public static SimpleDateFormat DEFAULT_DATE_FORMAT = JsonConfigKeys.DEFAULT_DATE_FORMAT;
+	public static SimpleDateFormat DEFAULT_TIME_FORMAT = JsonConfigKeys.DEFAULT_TIME_FORMAT;
+	public static SimpleDateFormat DEFAULT_DATETIME_FORMAT = JsonConfigKeys.DEFAULT_DATETIME_FORMAT;
 
 	public JsonCodecTrunk() {
 		config.putAll(JsonConfigKeys.DEFAULT_CONFIGS);
@@ -39,6 +43,15 @@ public class JsonCodecTrunk implements JsonCodec {
 	}
 
 	public static void main(String[] args) {
+		String a = "'a";
+		String ab = "\'a";
+		for (byte b : a.getBytes()) {
+			System.out.print(b);
+		}
+		System.out.println();
+		for (byte b : ab.getBytes()) {
+			System.out.print(b);
+		}
 	}
 
 	private static final Set<Class<?>> NUMERIC_TYPE = new HashSet<>();
@@ -53,8 +66,7 @@ public class JsonCodecTrunk implements JsonCodec {
 		NUMERIC_TYPE.add(BigDecimal.class);
 	}
 
-	public void encodeBasicType(Class<?> type, Object value,
-			StringBuilder builder) {
+	public void encodeBasicType(Class<?> type, Object value, StringBuilder builder) {
 		if (value instanceof Double) {
 
 		}
@@ -65,10 +77,10 @@ public class JsonCodecTrunk implements JsonCodec {
 	 */
 	@Override
 	public String encode(Object object) {
-//		int size = 1024;
+		// int size = 1024;
 		// ByteArrayOutputStream outputStream = new ByteArrayOutputStream(size);
-//		StringBuilder builder = new StringBuilder(size);
-		if(null == object){
+		// StringBuilder builder = new StringBuilder(size);
+		if (null == object) {
 			return null;
 		}
 		Class<?> type = object.getClass();
@@ -88,7 +100,7 @@ public class JsonCodecTrunk implements JsonCodec {
 				builder.append(encode(entry.getValue()));
 				builder.append(',');
 			}
-			if(!isEmpty){
+			if (!isEmpty) {
 				builder.deleteCharAt(builder.length() - 1);
 			}
 			builder.append('}');
@@ -104,7 +116,7 @@ public class JsonCodecTrunk implements JsonCodec {
 				builder.append(encode(item));
 				builder.append(',');
 			}
-			if(!isEmpty){
+			if (!isEmpty) {
 				builder.deleteCharAt(builder.length() - 1);
 			}
 			builder.append(']');
@@ -118,55 +130,60 @@ public class JsonCodecTrunk implements JsonCodec {
 			return builder.toString();
 		}
 		if (String.class.equals(type)) {
-			String value = (String)object;
-			StringBuilder builder = new StringBuilder(value.length()+2);
+			String value = (String) object;
+			StringBuilder builder = new StringBuilder(value.length() + 2);
 			builder.append("\"");
 			builder.append(value);
 			builder.append("\"");
 			return builder.toString();
-		} 
+		}
 		if (NUMERIC_TYPE.contains(type)) {
 			StringBuilder builder = new StringBuilder(10);
 			builder.append(object);
 			return builder.toString();
-		} 
-		
+		}
+
 		if (object instanceof Date) {
 			StringBuilder builder = new StringBuilder(10);
 			builder.append("\"");
-			builder.append(DEFAULT_DATE_FORMAT.format((Date)object));
+			builder.append(DEFAULT_DATE_FORMAT.format((Date) object));
 			builder.append("\"");
 			return builder.toString();
-		} 
+		}
 		if (object instanceof Time) {
 			StringBuilder builder = new StringBuilder(8);
 			builder.append("\"");
-			builder.append(DEFAULT_TIME_FORMAT.format((Time)object));
+			builder.append(DEFAULT_TIME_FORMAT.format((Time) object));
 			builder.append("\"");
 			return builder.toString();
-		} 
+		}
 		if (object instanceof Timestamp) {
 			StringBuilder builder = new StringBuilder(19);
 			builder.append("\"");
-			builder.append(DEFAULT_DATETIME_FORMAT.format((Timestamp)object));
+			builder.append(DEFAULT_DATETIME_FORMAT.format((Timestamp) object));
 			builder.append("\"");
 			return builder.toString();
-		} 
+		}
 		if (object instanceof java.util.Date) {
 			StringBuilder builder = new StringBuilder(19);
 			builder.append("\"");
-			builder.append(DEFAULT_DATETIME_FORMAT.format((java.util.Date)object));
+			builder.append(DEFAULT_DATETIME_FORMAT.format((java.util.Date) object));
 			builder.append("\"");
 			return builder.toString();
-		} 
+		}
 		return codecs.get(type).encode(object);
-		
 
 	}
 
 	@Override
-	public Object decode(String object) {
-		return null;
+	public Object decode(String string) {
+		Object result = null;
+		String json = string.trim();
+		if(json.startsWith("{")){
+			
+		}
+		
+		return result;
 	}
 
 	@Override

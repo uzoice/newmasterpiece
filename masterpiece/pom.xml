@@ -9,8 +9,8 @@
 	<name>masterpiece parent project</name>
 
 	<modules>
-		<module>contentparse</module>
 		<module>sjson</module>
+		<module>parser</module>
 	</modules>
 	<build>
 		<sourceDirectory>src/main/java</sourceDirectory>
