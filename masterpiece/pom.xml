@@ -11,6 +11,7 @@
 	<modules>
 		<module>sjson</module>
 		<module>parser</module>
+		<module>clipserver</module>
 	</modules>
 	<build>
 		<sourceDirectory>src/main/java</sourceDirectory>
